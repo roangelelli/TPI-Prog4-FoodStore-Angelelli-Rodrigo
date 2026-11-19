@@ -1,0 +1,18 @@
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.db
+
+# node
+node_modules/
+dist/
+
+# variables de entorno (se sube solo el .env.example)
+.env
+
+# sistema / editor
+.DS_Store
+.idea/
+.vscode/

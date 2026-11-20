@@ -1,35 +1,26 @@
 import type { AxiosError } from "axios";
-import { useAuthStore } from "@/features/auth";
+import { useAuthStore } from "@/store/authStore";
 import { useNotificationStore } from "@/store/notificationStore";
-import { api } from "./api";
+import { api } from "./axiosInstance";
+import { obtenerDetalle } from "./handleApiError";
 
-// Peticiones que responden 401 como parte de su funcionamiento normal: un 401 en el login
-// son credenciales incorrectas (el formulario muestra su mensaje) y /auth/me ya lo maneja
-// checkAuth del store.
+// en estas rutas el 401 es parte del flujo normal
 const RUTAS_DE_AUTH = ["/auth/token", "/auth/me"];
 
-/**
- * Interceptor de respuesta (se importa una sola vez en main.tsx):
- * - 401 (sesión vencida o inexistente): limpia la sesión del store. ProtectedRoute detecta el
- *   cambio y lleva al login. No se recarga la página: así no hay recargas en bucle.
- * - 403 (sesión válida, sin permisos): muestra una notificación de acceso denegado. No cierra
- *   la sesión ni redirige al login.
- * En ambos casos el error se propaga (Promise.reject) para que cada hook pueda reaccionar.
- */
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     const status = error.response?.status;
     const url = error.config?.url ?? "";
     const esDeAuth = RUTAS_DE_AUTH.some((ruta) => url.includes(ruta));
+    const desactivada = status === 400 && obtenerDetalle(error) === "Cuenta de usuario desactivada";
 
-    if (status === 401 && !esDeAuth) {
-      useAuthStore.setState({ user: null, status: "unauthenticated" });
+    // sesion vencida o cuenta desactivada: se limpia y ProtectedRoute manda al login
+    if ((status === 401 && !esDeAuth) || desactivada) {
+      useAuthStore.getState().limpiarSesion();
     }
     if (status === 403) {
-      useNotificationStore
-        .getState()
-        .showNotification("Acceso denegado: no tenés permisos para realizar esta acción.");
+      useNotificationStore.getState().showNotification("Acceso denegado: no tenés permisos.");
     }
     return Promise.reject(error);
   },

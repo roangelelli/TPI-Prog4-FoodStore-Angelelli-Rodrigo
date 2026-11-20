@@ -1,37 +1,18 @@
-/** Roles que maneja el backend. */
-export type Role = "admin" | "user";
+export type Role = "user" | "admin";
 
-/** Usuario autenticado que guarda el AuthStore. No incluye el token: está en la cookie HttpOnly. */
-export interface UsuarioAuth {
+export interface Usuario {
   id: number;
-  nombre: string;
-  apellido: string;
+  username: string;
+  full_name: string;
   email: string;
-  /** Nombres de los roles vigentes del usuario (GET /auth/me). */
-  roles: Role[];
-}
-
-/** Respuesta del backend en GET /auth/me, POST /auth/register y /admin/usuarios. */
-export interface UsuarioRespuesta extends UsuarioAuth {
-  celular: string | null;
-  activo: boolean;
+  role: Role;
+  disabled: boolean;
   created_at: string;
 }
 
-export interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-/** Datos del formulario de registro (celular opcional: puede quedar vacío). */
 export interface RegisterData {
-  nombre: string;
-  apellido: string;
+  username: string;
+  full_name: string;
   email: string;
-  celular: string;
   password: string;
-}
-
-export interface MensajeRespuesta {
-  mensaje: string;
 }

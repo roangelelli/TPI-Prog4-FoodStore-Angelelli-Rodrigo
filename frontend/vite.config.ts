@@ -6,7 +6,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
-    // Alias @/ → src/ (el mismo alias se declara en tsconfig.app.json, en "paths").
+    // el alias @ apunta a src (tambien esta en tsconfig.app.json)
     alias: { "@": path.resolve(import.meta.dirname, "src") },
   },
 });

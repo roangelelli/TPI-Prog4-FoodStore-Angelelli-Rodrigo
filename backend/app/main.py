@@ -3,8 +3,14 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app import modules  # noqa: F401  (carga los modelos)
 from app.core.config import settings
 from app.core.database import create_all_tables
+from app.modules.auth.router import router as auth_router
+from app.modules.categorias.router import router as categorias_router
+from app.modules.pedidos.router import router as pedidos_router
+from app.modules.productos.router import router as productos_router
+from app.modules.usuarios.router import router as usuarios_router
 
 API_PREFIX = "/api/v1"
 
@@ -26,4 +32,5 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# los routers se van incluyendo con prefix=API_PREFIX en las etapas siguientes
+for router in (auth_router, usuarios_router, categorias_router, productos_router, pedidos_router):
+    app.include_router(router, prefix=API_PREFIX)

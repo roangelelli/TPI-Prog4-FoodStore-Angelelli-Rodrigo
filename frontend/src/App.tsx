@@ -1,15 +1,15 @@
 import { useEffect } from "react";
-import { useAuthStore } from "@/features/auth";
 import { AppRouter } from "@/routes/AppRouter";
 import Toast from "@/shared/components/Toast";
+import { useAuthStore } from "@/store/authStore";
 
-// App solo compone la aplicación: confirma la sesión al iniciar y monta el router y el Toast.
-function App() {
-  const checkAuth = useAuthStore((state) => state.checkAuth);
+export default function App() {
+  const checkSession = useAuthStore((state) => state.checkSession);
 
+  // unica llamada en useEffect: confirmar la sesion al montar
   useEffect(() => {
-    void checkAuth(); // GET /auth/me con la cookie
-  }, [checkAuth]);
+    void checkSession();
+  }, [checkSession]);
 
   return (
     <>
@@ -18,5 +18,3 @@ function App() {
     </>
   );
 }
-
-export default App;

@@ -1,0 +1,67 @@
+@api = http://localhost:8000/api/v1
+
+### login admin (guarda la cookie)
+POST {{api}}/auth/token
+Content-Type: application/x-www-form-urlencoded
+
+username=admin&password=Admin1234!
+
+### perfil
+GET {{api}}/auth/me
+
+### registro
+POST {{api}}/auth/register
+Content-Type: application/json
+
+{ "username": "ana", "full_name": "Ana Perez", "email": "ana@mail.com", "password": "Secreta123" }
+
+### usuarios (admin)
+GET {{api}}/admin/usuarios
+
+### categorias
+GET {{api}}/categorias
+
+### crear categoria (admin)
+POST {{api}}/categorias
+Content-Type: application/json
+
+{ "nombre": "Ensaladas", "descripcion": "Frescas" }
+
+### productos paginados con busqueda y filtros
+GET {{api}}/productos?skip=0&limit=5&search=pizza&disponible=true
+
+### crear producto (admin)
+POST {{api}}/productos
+Content-Type: application/json
+
+{ "categoria_id": 1, "nombre": "Hamburguesa Veggie", "precio_base": 5000, "stock": 10, "imagen_url": "https://placehold.co/400x300?text=Veggie" }
+
+### cambiar stock y disponibilidad (admin)
+PATCH {{api}}/productos/1/stock
+Content-Type: application/json
+
+{ "stock": 25, "disponible": true }
+
+### crear pedido
+POST {{api}}/pedidos
+Content-Type: application/json
+
+{ "items": [ { "producto_id": 1, "cantidad": 2 }, { "producto_id": 5, "cantidad": 1 } ], "forma_pago": "EFECTIVO", "direccion_entrega": "Calle 123", "notas": "sin cebolla" }
+
+### mis pedidos (o todos si sos admin)
+GET {{api}}/pedidos?skip=0&limit=10
+
+### resumen (admin)
+GET {{api}}/pedidos/resumen
+
+### avanzar estado (admin)
+PATCH {{api}}/pedidos/1/estado
+Content-Type: application/json
+
+{ "estado": "EN_PREPARACION" }
+
+### cancelar pedido propio
+PATCH {{api}}/pedidos/1/cancelar
+
+### logout
+POST {{api}}/auth/logout

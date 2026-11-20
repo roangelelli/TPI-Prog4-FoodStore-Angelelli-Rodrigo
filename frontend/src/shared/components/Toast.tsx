@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useNotificationStore } from "@/store/notificationStore";
 
-/** Aviso global. Se monta una sola vez, en App.tsx, y se oculta solo a los 3 segundos. */
 export default function Toast() {
   const message = useNotificationStore((state) => state.message);
   const show = useNotificationStore((state) => state.show);
@@ -10,7 +9,6 @@ export default function Toast() {
   useEffect(() => {
     if (!show) return;
     const timer = setTimeout(hideNotification, 3000);
-    // Un mensaje nuevo reinicia el tiempo (message está entre las dependencias).
     return () => clearTimeout(timer);
   }, [show, message, hideNotification]);
 

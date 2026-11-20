@@ -1,8 +1,5 @@
 @import "tailwindcss";
 
-/* Sistema de colores (tokens de diseño): cada color tiene un propósito claro.
-   Cada variable --color-<nombre> genera las utilidades bg-<nombre>, text-<nombre>,
-   border-<nombre>, etc. */
 @theme {
   --color-brand: #2563eb;
   --color-brand-hover: #1d4ed8;
@@ -11,6 +8,5 @@
   --color-error: #dc2626;
 }
 
-/* Modo oscuro controlado desde el themeStore: la clase "dark" en <html> activa la variante
-   dark: de Tailwind (por defecto seguiría la preferencia del sistema operativo). */
+/* el modo oscuro se activa con la clase "dark" en <html> */
 @custom-variant dark (&:where(.dark, .dark *));

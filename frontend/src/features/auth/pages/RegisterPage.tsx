@@ -1,160 +1,156 @@
 import { useState } from "react";
+import { useForm } from "@tanstack/react-form";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import AuthLayout from "@/features/auth/components/AuthLayout";
-import { useAuth } from "@/features/auth/hooks/useAuth";
-import { useRegisterForm } from "@/features/auth/hooks/useRegisterForm";
-import { handleApiError, obtenerDetalle } from "@/shared/api/handleApiError";
-import Button from "@/shared/components/ui/Button";
-import Campo, { claseInput } from "@/shared/components/ui/Campo";
-import { emailValido, passwordValida, requerido } from "@/shared/utils/validators";
+import { handleApiError } from "@/shared/api/handleApiError";
+import Button from "@/shared/ui/Button";
+import Campo from "@/shared/ui/Campo";
+import Card from "@/shared/ui/Card";
+import Input from "@/shared/ui/Input";
+import { emailValido, largoEntre, passwordValida, requerido } from "@/shared/utils/validators";
+import { useAuthStore } from "@/store/authStore";
+import { requestRegister } from "../api/auth";
 
 export default function RegisterPage() {
-  const { user, register } = useAuth();
+  const usuario = useAuthStore((state) => state.usuario);
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
 
-  const form = useRegisterForm(async (datos) => {
-    setError(null);
-    try {
-      await register(datos);
-      // Al completar el registro se redirige al login.
-      navigate("/login", { replace: true, state: { registrado: true } });
-    } catch (e) {
-      // 409: el email ya existe (mensaje del backend). 422: datos inválidos.
-      setError(obtenerDetalle(e) ?? handleApiError(e));
-    }
+  const form = useForm({
+    defaultValues: { username: "", full_name: "", email: "", password: "", confirmar: "" },
+    onSubmit: async ({ value }) => {
+      setError(null);
+      try {
+        await requestRegister({
+          username: value.username.trim(),
+          full_name: value.full_name.trim(),
+          email: value.email.trim(),
+          password: value.password,
+        });
+        navigate("/login", { replace: true, state: { registrado: true } });
+      } catch (e) {
+        setError(handleApiError(e));
+      }
+    },
   });
 
-  if (user) return <Navigate to="/categories" replace />;
+  if (usuario) return <Navigate to="/" replace />;
 
   return (
-    <AuthLayout titulo="Crear cuenta">
-      <form
-        noValidate
-        className="mt-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm"
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          void form.handleSubmit();
-        }}
-      >
-        <form.Field
-          name="nombre"
-          validators={{
-            onChange: requerido("El nombre es obligatorio"),
-            onBlur: requerido("El nombre es obligatorio"),
+    <div className="mx-auto max-w-sm">
+      <h1 className="mb-4 text-2xl font-bold text-slate-900 dark:text-slate-100">Crear cuenta</h1>
+      <Card>
+        <form
+          noValidate
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            void form.handleSubmit();
           }}
         >
-          {(field) => (
-            <Campo id="nombre" etiqueta="Nombre" errores={field.state.meta.errors}>
-              <input
-                id="nombre"
-                autoFocus
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-                className={claseInput}
-              />
-            </Campo>
+          <form.Field
+            name="username"
+            validators={{ onChange: largoEntre(3, 50, "El usuario debe tener entre 3 y 50 caracteres") }}
+          >
+            {(field) => (
+              <Campo id="username" etiqueta="Usuario" errores={field.state.meta.errors}>
+                <Input
+                  id="username"
+                  autoComplete="username"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+              </Campo>
+            )}
+          </form.Field>
+
+          <form.Field name="full_name" validators={{ onChange: requerido("El nombre es obligatorio") }}>
+            {(field) => (
+              <Campo id="full_name" etiqueta="Nombre completo" errores={field.state.meta.errors}>
+                <Input
+                  id="full_name"
+                  autoComplete="name"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+              </Campo>
+            )}
+          </form.Field>
+
+          <form.Field name="email" validators={{ onChange: emailValido }}>
+            {(field) => (
+              <Campo id="email" etiqueta="Email" errores={field.state.meta.errors}>
+                <Input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+              </Campo>
+            )}
+          </form.Field>
+
+          <form.Field name="password" validators={{ onChange: passwordValida }}>
+            {(field) => (
+              <Campo id="password" etiqueta="Contraseña" errores={field.state.meta.errors}>
+                <Input
+                  id="password"
+                  type="password"
+                  autoComplete="new-password"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+              </Campo>
+            )}
+          </form.Field>
+
+          <form.Field
+            name="confirmar"
+            validators={{
+              onChangeListenTo: ["password"],
+              onChange: ({ value, fieldApi }) =>
+                value !== fieldApi.form.getFieldValue("password") ? "Las contraseñas no coinciden" : undefined,
+            }}
+          >
+            {(field) => (
+              <Campo id="confirmar" etiqueta="Repetir contraseña" errores={field.state.meta.errors}>
+                <Input
+                  id="confirmar"
+                  type="password"
+                  autoComplete="new-password"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+              </Campo>
+            )}
+          </form.Field>
+
+          {error && (
+            <p role="alert" className="mt-4 rounded-md bg-error/10 px-3 py-2 text-sm text-error">
+              {error}
+            </p>
           )}
-        </form.Field>
 
-        <form.Field
-          name="apellido"
-          validators={{
-            onChange: requerido("El apellido es obligatorio"),
-            onBlur: requerido("El apellido es obligatorio"),
-          }}
-        >
-          {(field) => (
-            <Campo id="apellido" etiqueta="Apellido" errores={field.state.meta.errors}>
-              <input
-                id="apellido"
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-                className={claseInput}
-              />
-            </Campo>
-          )}
-        </form.Field>
-
-        <form.Field name="email" validators={{ onChange: emailValido, onBlur: emailValido }}>
-          {(field) => (
-            <Campo id="email" etiqueta="Email" errores={field.state.meta.errors}>
-              <input
-                id="email"
-                type="email"
-                autoComplete="username"
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-                className={claseInput}
-              />
-            </Campo>
-          )}
-        </form.Field>
-
-        <form.Field name="celular">
-          {(field) => (
-            <Campo id="celular" etiqueta="Celular (opcional)" errores={field.state.meta.errors}>
-              <input
-                id="celular"
-                type="tel"
-                maxLength={20}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-                className={claseInput}
-              />
-            </Campo>
-          )}
-        </form.Field>
-
-        <form.Field
-          name="password"
-          validators={{ onChange: passwordValida, onBlur: passwordValida }}
-        >
-          {(field) => (
-            <Campo
-              id="password"
-              etiqueta="Contraseña (mínimo 8 caracteres)"
-              errores={field.state.meta.errors}
-            >
-              <input
-                id="password"
-                type="password"
-                autoComplete="new-password"
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-                className={claseInput}
-              />
-            </Campo>
-          )}
-        </form.Field>
-
-        {error && (
-          <p role="alert" className="mt-4 rounded-md bg-error/10 px-3 py-2 text-sm text-error">
-            {error}
-          </p>
-        )}
-
-        <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting] as const}>
-          {([canSubmit, isSubmitting]) => (
-            <Button type="submit" className="mt-6 w-full" disabled={!canSubmit || isSubmitting}>
-              {isSubmitting ? "Creando cuenta..." : "Registrarme"}
-            </Button>
-          )}
-        </form.Subscribe>
-      </form>
-
+          <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting] as const}>
+            {([canSubmit, isSubmitting]) => (
+              <Button type="submit" className="mt-6 w-full" disabled={!canSubmit || isSubmitting}>
+                {isSubmitting ? "Creando..." : "Registrarme"}
+              </Button>
+            )}
+          </form.Subscribe>
+        </form>
+      </Card>
       <p className="mt-4 text-center text-sm text-secondary">
         ¿Ya tenés cuenta?{" "}
         <Link to="/login" className="font-medium text-brand hover:underline">
           Iniciá sesión
         </Link>
       </p>
-    </AuthLayout>
+    </div>
   );
 }

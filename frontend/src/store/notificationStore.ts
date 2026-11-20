@@ -7,7 +7,6 @@ interface NotificationStore {
   hideNotification: () => void;
 }
 
-/** Notificaciones globales: cualquier componente o hook avisa sin recibir props. */
 export const useNotificationStore = create<NotificationStore>()((set) => ({
   message: "",
   show: false,

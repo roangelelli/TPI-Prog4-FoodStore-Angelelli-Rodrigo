@@ -10,7 +10,7 @@ const clases: Record<Variante, string> = {
   primary: "bg-brand text-white hover:bg-brand-hover",
   secondary: "bg-secondary text-white hover:opacity-90",
   outline: "border border-brand text-brand hover:bg-brand/10",
-  danger: "border border-error text-error hover:bg-error/10",
+  danger: "border border-error text-error hover:bg-error/10 dark:border-red-400 dark:text-red-400",
 };
 
 export default function Button({

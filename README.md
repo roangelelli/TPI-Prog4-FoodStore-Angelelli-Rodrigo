@@ -4,7 +4,7 @@ Repositorio del TP Integrador de Programación 4 (Tecnicatura Universitaria en P
 Alumno: Angelelli, Rodrigo Martín
 
 - Repositorio: https://github.com/roangelelli/TPI-Prog4-FoodStore-Angelelli-Rodrigo
-- Video de presentación: _(pegar acá el link al video)_
+- Video de presentación: https://youtu.be/kaoUHVXj21E
 
 Sistema de pedidos para una tienda de comida. Los clientes arman un carrito y hacen pedidos; el administrador gestiona categorías, productos, usuarios y el estado de los pedidos.
 
@@ -37,7 +37,7 @@ python3.12 -m venv .venv
 source .venv/bin/activate          # en Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 cp .env.example .env               # completar DATABASE_URL y SECRET_KEY
-python -m app.db.seed              # carga el admin, categorías y productos de prueba
+python -m app.db.seed              # carga el admin, 4 categorías y 8 productos con stock y foto
 uvicorn app.main:app --reload
 ```
 - API: http://localhost:8000
@@ -89,3 +89,6 @@ Además se puede registrar un cliente nuevo desde `/register`.
 | Pedidos | `POST /pedidos`, `GET /pedidos`, `GET /pedidos/resumen` (admin), `GET /pedidos/{id}`, `PATCH /pedidos/{id}/estado` (admin), `PATCH /pedidos/{id}/cancelar` |
 
 `backend/pruebas.http` tiene requests de ejemplo (extensión REST Client de VS Code).
+
+## Imágenes de los productos
+Las fotos de ejemplo están en `frontend/public/productos/` (el seed las referencia como `/productos/<archivo>.jpg`) y las sirve el propio frontend. Se tomaron del repositorio [Foodish](https://github.com/surhud004/Foodish) (licencia MIT; las imágenes provienen de Kaggle y Pixabay). Desde el panel de administración se puede cambiar la URL de cualquier producto.

@@ -64,7 +64,7 @@ export default function CarritoPage() {
         </Button>
         <div className="flex items-center gap-4">
           <span className="text-xl font-bold text-slate-900 dark:text-slate-100">Total: {formatearPrecio(total())}</span>
-          <Button onClick={() => navigate(usuario ? "/checkout" : "/login", { state: { from: "/checkout" } })}>
+          <Button onClick={() => navigate(usuario ? "/checkout" : "/login", { state: { from: { pathname: "/checkout" } } })}>
             {usuario ? "Continuar" : "Iniciar sesión para comprar"}
           </Button>
         </div>

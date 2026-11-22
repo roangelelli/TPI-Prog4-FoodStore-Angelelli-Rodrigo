@@ -15,25 +15,26 @@ USUARIOS = [
 CATEGORIAS = {
     "Hamburguesas": "Hamburguesas caseras",
     "Pizzas": "Pizzas al horno de piedra",
-    "Bebidas": "Gaseosas, jugos y agua",
+    "Pastas": "Pastas con salsas caseras",
     "Postres": "Dulces para cerrar la comida",
 }
 
-# (nombre, categoria, precio, stock, descripcion)
+# (nombre, categoria, precio, stock, descripcion, archivo de imagen)
 PRODUCTOS = [
-    ("Hamburguesa Clasica", "Hamburguesas", 4500, 20, "Carne, lechuga, tomate y cheddar"),
-    ("Hamburguesa Doble", "Hamburguesas", 6200, 15, "Doble carne con panceta y cheddar"),
-    ("Pizza Muzzarella", "Pizzas", 7000, 12, "Salsa de tomate y muzzarella"),
-    ("Pizza Napolitana", "Pizzas", 7800, 10, "Muzzarella, tomate fresco y ajo"),
-    ("Gaseosa 500ml", "Bebidas", 1500, 50, "Cola, lima o naranja"),
-    ("Agua Mineral 500ml", "Bebidas", 1000, 60, "Con o sin gas"),
-    ("Flan con Dulce de Leche", "Postres", 2500, 18, "Flan casero con crema"),
-    ("Brownie", "Postres", 2800, 14, "Brownie de chocolate con nueces"),
+    ("Hamburguesa Clásica", "Hamburguesas", 4500, 20, "Carne, lechuga, tomate y cheddar", "hamburguesa-clasica"),
+    ("Hamburguesa Doble", "Hamburguesas", 6200, 15, "Doble carne con panceta y cheddar", "hamburguesa-doble"),
+    ("Pizza Muzzarella", "Pizzas", 7000, 12, "Salsa de tomate, muzzarella y albahaca", "pizza-muzzarella"),
+    ("Pizza Napolitana", "Pizzas", 7800, 10, "Muzzarella, tomate fresco, rúcula y ajo", "pizza-napolitana"),
+    ("Spaghetti con Salsa", "Pastas", 5200, 18, "Spaghetti con salsa de tomate casera", "spaghetti-salsa"),
+    ("Fideos a la Crema", "Pastas", 5800, 14, "Fideos con salsa cremosa y hongos", "fideos-crema"),
+    ("Brownie", "Postres", 2800, 25, "Brownie de chocolate con baño de cacao", "brownie"),
+    ("Cheesecake de Frutos Rojos", "Postres", 3200, 16, "Porción individual con frutos rojos", "cheesecake-frutos-rojos"),
 ]
 
 
-def imagen(nombre: str) -> str:
-    return "https://placehold.co/400x300?text=" + nombre.replace(" ", "+")
+# las fotos estan en frontend/public/productos y las sirve el frontend
+def imagen(archivo: str) -> str:
+    return f"/productos/{archivo}.jpg"
 
 
 def seed() -> None:
@@ -57,7 +58,7 @@ def seed() -> None:
                 session.add(Categoria(nombre=nombre, descripcion=descripcion))
         session.commit()
 
-        for nombre, cat_nombre, precio, stock, descripcion in PRODUCTOS:
+        for nombre, cat_nombre, precio, stock, descripcion, archivo in PRODUCTOS:
             if session.exec(select(Producto).where(Producto.nombre == nombre)).first():
                 continue
             categoria = session.exec(select(Categoria).where(Categoria.nombre == cat_nombre)).one()
@@ -67,7 +68,7 @@ def seed() -> None:
                     nombre=nombre,
                     descripcion=descripcion,
                     precio_base=precio,
-                    imagen_url=imagen(nombre),
+                    imagen_url=imagen(archivo),
                     stock=stock,
                 )
             )

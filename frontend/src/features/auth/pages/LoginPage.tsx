@@ -6,6 +6,7 @@ import Button from "@/shared/ui/Button";
 import Campo from "@/shared/ui/Campo";
 import Card from "@/shared/ui/Card";
 import Input from "@/shared/ui/Input";
+import Logo from "@/shared/ui/Logo";
 import { requerido } from "@/shared/utils/validators";
 import { useAuthStore } from "@/store/authStore";
 
@@ -37,8 +38,14 @@ export default function LoginPage() {
   if (usuario) return <Navigate to={desde ?? "/"} replace />;
 
   return (
-    <div className="mx-auto max-w-sm">
-      <h1 className="mb-4 text-2xl font-bold text-slate-900 dark:text-slate-100">Iniciar sesión</h1>
+    <div className="mx-auto max-w-sm pt-4">
+      <div className="mb-6 text-center">
+        <div className="flex justify-center">
+          <Logo size={48} />
+        </div>
+        <h1 className="mt-3 text-2xl font-bold text-slate-900 dark:text-slate-100">Iniciar sesión</h1>
+        <p className="mt-1 text-sm text-secondary">Ingresá para hacer tu pedido</p>
+      </div>
       {registrado && (
         <p role="status" className="mb-4 rounded-md bg-success/10 px-3 py-2 text-sm text-success">
           Cuenta creada. Iniciá sesión con tu usuario y contraseña.
@@ -46,6 +53,7 @@ export default function LoginPage() {
       )}
       <Card>
         <form
+          className="-mt-4"
           noValidate
           onSubmit={(e) => {
             e.preventDefault();

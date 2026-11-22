@@ -14,7 +14,7 @@ export default function ProductoCard({ producto, enCarrito, onAgregar }: Product
   const tope = enCarrito >= producto.stock;
 
   return (
-    <Card className="flex flex-col overflow-hidden !p-0">
+    <Card className="flex flex-col overflow-hidden !p-0 transition hover:-translate-y-0.5 hover:shadow-md">
       {producto.imagen_url ? (
         <img src={producto.imagen_url} alt={producto.nombre} className="h-40 w-full object-cover" loading="lazy" />
       ) : (

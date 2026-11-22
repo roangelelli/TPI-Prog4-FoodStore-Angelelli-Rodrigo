@@ -6,6 +6,7 @@ import Button from "@/shared/ui/Button";
 import Campo from "@/shared/ui/Campo";
 import Card from "@/shared/ui/Card";
 import Input from "@/shared/ui/Input";
+import Logo from "@/shared/ui/Logo";
 import { emailValido, largoEntre, passwordValida, requerido } from "@/shared/utils/validators";
 import { useAuthStore } from "@/store/authStore";
 import { requestRegister } from "../api/auth";
@@ -36,10 +37,17 @@ export default function RegisterPage() {
   if (usuario) return <Navigate to="/" replace />;
 
   return (
-    <div className="mx-auto max-w-sm">
-      <h1 className="mb-4 text-2xl font-bold text-slate-900 dark:text-slate-100">Crear cuenta</h1>
+    <div className="mx-auto max-w-sm pt-4">
+      <div className="mb-6 text-center">
+        <div className="flex justify-center">
+          <Logo size={48} />
+        </div>
+        <h1 className="mt-3 text-2xl font-bold text-slate-900 dark:text-slate-100">Crear cuenta</h1>
+        <p className="mt-1 text-sm text-secondary">Registrate para empezar a pedir</p>
+      </div>
       <Card>
         <form
+          className="-mt-4"
           noValidate
           onSubmit={(e) => {
             e.preventDefault();
